@@ -24,9 +24,24 @@
       }
     }
 
+    // function loggerMiddleware(store) {
+    function loggerMiddleware({ getState }) { // Destructuring 구조분해할당
+      return (next) => (action) => {
+        console.log("dispatch 예정 action", action);
+
+        // Middleware chain이 있는 다음 dispatch 함수를 호출
+        const returnValue = next(action);
+
+        console.log("dispatch 이후 state", getState());
+
+        return returnValue;
+      }
+    }
+
     const store = Redux.createStore(
       todoReducer,
-      ["처음 만난 리덕스 공부하기"]
+      ["처음 만난 리덕스 공부하기"],
+      Redux.applyMiddleware(loggerMiddleware)
     );
 
     const todoListElem = document.getElementById("todo-list");
