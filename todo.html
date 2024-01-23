@@ -17,13 +17,17 @@
   </div>
 
   <script>
+    var  ACTION_TYPE_ADD_TODO = "ADD_TODO";
+    var  ACTION_TYPE_REMOVE_TODO = "REMOVE_TODO";
+    var  ACTION_TYPE_REMOVE_ALL = "REMOVE_ALL";
+
     const todoReducer = (state, action) => {
       switch (action.type) {
-        case "ADD_TODO":
+        case ACTION_TYPE_ADD_TODO:
           return state.concat(action.text);
-        case "REMOVE_TODO":
+        case ACTION_TYPE_REMOVE_TODO:
           return state.slice(0, -1);
-        case "REMOVE_ALL":
+        case ACTION_TYPE_REMOVE_ALL:
           return [];
         default:
           return state;
@@ -71,7 +75,7 @@
     document.getElementById("add-button").addEventListener("click", function() {
       // Action을 실제로 dispatch
       store.dispatch({
-        type: "ADD_TODO",
+        type: ACTION_TYPE_ADD_TODO,
         text: inputElem.value
       });
 
@@ -82,13 +86,13 @@
 
     document.getElementById("remove-button").addEventListener("click", function() {
       store.dispatch({
-        type: "REMOVE_TODO",
+        type: ACTION_TYPE_REMOVE_TODO,
       });
     })
 
     document.getElementById("remove-all-button").addEventListener("click", function() {
       store.dispatch({
-        type: "REMOVE_ALL",
+        type: ACTION_TYPE_REMOVE_ALL,
       });
     })
     
