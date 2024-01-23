@@ -11,6 +11,7 @@
   <div>
     <input id="input-text" type="text">
     <button id="add-button">할 일 추가</button>
+    <button id="logging-state">State Logging</button>
   </div>
 
   <script>
@@ -55,6 +56,10 @@
 
       // Input 초기화
       inputElem.value = "";
+    })
+
+    document.getElementById("logging-state").addEventListener("click", function() {
+      console.log("현재 state", store.getState());;
     })
     
   </script>
