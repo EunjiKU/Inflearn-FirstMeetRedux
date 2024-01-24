@@ -72,28 +72,37 @@
     render();
     store.subscribe(render);
 
+    function addTodoActionCreator(text) {
+      return {
+        type: ACTION_TYPE_ADD_TODO,
+        text: text
+      }
+    }
+    function removeTodoActionCreator() {
+      return {
+        type: ACTION_TYPE_REMOVE_TODO,
+      }
+    }
+    function removeAlloActionCreator() {
+      return {
+        type: ACTION_TYPE_REMOVE_ALL,
+      }
+    }
+
     document.getElementById("add-button").addEventListener("click", function() {
       // Action을 실제로 dispatch
-      store.dispatch({
-        type: ACTION_TYPE_ADD_TODO,
-        text: inputElem.value
-      });
+      store.dispatch(addTodoActionCreator(inputElem.value));
 
       // Input 초기화
       inputElem.value = "";
     })
-    
 
     document.getElementById("remove-button").addEventListener("click", function() {
-      store.dispatch({
-        type: ACTION_TYPE_REMOVE_TODO,
-      });
+      store.dispatch(removeTodoActionCreator());
     })
 
     document.getElementById("remove-all-button").addEventListener("click", function() {
-      store.dispatch({
-        type: ACTION_TYPE_REMOVE_ALL,
-      });
+      store.dispatch(removeAlloActionCreator());
     })
     
     document.getElementById("logging-state").addEventListener("click", function() {
