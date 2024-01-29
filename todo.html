@@ -7,7 +7,6 @@
 <body>
   <h3>오늘 할 일</h3>
   <ul id="todo-list"></ul>
-
   <div>
     <input id="input-text" type="text">
     <button id="add-button">할 일 추가</button>
@@ -16,12 +15,28 @@
     <button id="logging-state">State Logging</button>
   </div>
 
+  <h3>메모</h3>
+  <ul id="memo-list"></ul>
+  <div>
+    <input id="input-memo-text" type="text">
+    <button id="add-memo-button">할 일 추가</button>
+    <button id="remove-memo-button">할 일 삭제</button>
+  </div>
+
   <script>
+    // 💛TODO
     var  ACTION_TYPE_ADD_TODO = "ADD_TODO";
     var  ACTION_TYPE_REMOVE_TODO = "REMOVE_TODO";
     var  ACTION_TYPE_REMOVE_ALL = "REMOVE_ALL";
+    // 🧡MEMO
+    var  ACTION_TYPE_ADD_MEMO = "ADD_MEMO";
+    var  ACTION_TYPE_REMOVE_MEMO = "REMOVE_MEMO";
 
-    const todoReducer = (state, action) => {
+    var todoInitialState = [];
+    var memoInitialState = [];
+
+    // 💛TODO
+    const todoReducer = (state = todoInitialState, action) => {
       switch (action.type) {
         case ACTION_TYPE_ADD_TODO:
           return state.concat(action.text);
@@ -29,6 +44,17 @@
           return state.slice(0, -1);
         case ACTION_TYPE_REMOVE_ALL:
           return [];
+        default:
+          return state;
+      }
+    }
+    // 🧡MEMO
+    const memoReducer = (state = memoInitialState, action) => {
+      switch (action.type) {
+        case ACTION_TYPE_ADD_MEMO:
+          return state.concat(action.text)
+        case ACTION_TYPE_REMOVE_MEMO:
+          return state.slice(0, -1);
         default:
           return state;
       }
@@ -48,30 +74,44 @@
       }
     }
 
+    var rootReducer = Redux.combineReducers({
+      todo: todoReducer,
+      memo: memoReducer
+    })
+
     const store = Redux.createStore(
-      todoReducer,
-      ["처음 만난 리덕스 공부하기"],
+      rootReducer,
       Redux.applyMiddleware(loggerMiddleware)
     );
 
     const todoListElem = document.getElementById("todo-list");
+    const memoListElem = document.getElementById("memo-list");
     const inputElem = document.getElementById("input-text");
+    const inputMemoElem = document.getElementById("input-memo-text");
 
     function render() {
-      // 이전 TOD 목록 초기화
+      // 💛TODO
       todoListElem.innerHTML = "";
 
-      // TODO 목록 렌더링
-      store.getState().forEach((todo) => {
+      store.getState().todo.forEach((todo) => {
         const todoListItemElem = document.createElement("li");
         todoListItemElem.textContent = todo;
         todoListElem.appendChild(todoListItemElem);
+      })
+      // 🧡MEMO
+      memoListElem.innerHTML = "";
+
+      store.getState().memo.forEach((memo) => {
+        const memoListItemElem = document.createElement("li");
+        memoListItemElem.textContent = memo;
+        memoListElem.appendChild(memoListItemElem);
       })
     }
 
     render();
     store.subscribe(render);
 
+    // 💛TODO
     function addTodoActionCreator(text) {
       return {
         type: ACTION_TYPE_ADD_TODO,
@@ -88,25 +128,42 @@
         type: ACTION_TYPE_REMOVE_ALL,
       }
     }
+    // 🧡MEMO
+    function addMemoActionCreator(text) {
+      return {
+        type: ACTION_TYPE_ADD_MEMO,
+        text: text
+      }
+    }
+    function removeMemoActionCreator() {
+      return {
+        type: ACTION_TYPE_REMOVE_MEMO,
+      }
+    }
 
+    // 💛TODO
     document.getElementById("add-button").addEventListener("click", function() {
       // Action을 실제로 dispatch
       store.dispatch(addTodoActionCreator(inputElem.value));
-
       // Input 초기화
       inputElem.value = "";
     })
-
     document.getElementById("remove-button").addEventListener("click", function() {
       store.dispatch(removeTodoActionCreator());
     })
-
     document.getElementById("remove-all-button").addEventListener("click", function() {
       store.dispatch(removeAlloActionCreator());
     })
-    
     document.getElementById("logging-state").addEventListener("click", function() {
       console.log("현재 state", store.getState());;
+    })
+    // 🧡MEMO
+    document.getElementById("add-memo-button").addEventListener("click", function() {
+      store.dispatch(addMemoActionCreator(inputMemoElem.value));
+      inputMemoElem.value = "";
+    })
+    document.getElementById("remove-memo-button").addEventListener("click", function() {
+      store.dispatch(removeMemoActionCreator());
     })
   </script>
 </body>
